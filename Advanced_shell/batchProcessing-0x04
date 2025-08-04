@@ -4,8 +4,6 @@ POKEMONS=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
 DATA_DIR="pokemon_data_parallel"
 mkdir -p "$DATA_DIR"
 
-declare -A PIDS
-
 fetch_pokemon() {
     pokemon="$1"
     echo "Fetching data for $pokemon..."
@@ -19,20 +17,16 @@ fetch_pokemon() {
     fi
 }
 
-# Launch all fetches in the background and save their PIDs
+# Start all fetches in the background
 for pokemon in "${POKEMONS[@]}"; do
     fetch_pokemon "$pokemon" &
-    PIDS["$pokemon"]=$!
 done
 
-# Monitor all PIDs
-for pokemon in "${!PIDS[@]}"; do
-    pid=${PIDS[$pokemon]}
+# Show background jobs using the `jobs` command
+echo "Running background jobs:"
+jobs
 
-    # Optional: Timeout check (e.g., 10s max)
-    (sleep 10 && kill -0 "$pid" 2>/dev/null && echo "⚠️ Timeout: Killing $pokemon (PID $pid)" && kill "$pid") &
-
-    wait "$pid"
-done
+# Wait for all background processes to finish
+wait
 
 echo "✅ All Pokémon data fetches completed."
