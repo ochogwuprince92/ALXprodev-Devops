@@ -4,6 +4,9 @@ POKEMONS=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
 DATA_DIR="pokemon_data_parallel"
 mkdir -p "$DATA_DIR"
 
+# Array to store process IDs
+PIDS=()
+
 fetch_pokemon() {
     pokemon="$1"
     echo "Fetching data for $pokemon..."
@@ -17,16 +20,24 @@ fetch_pokemon() {
     fi
 }
 
-# Start all fetches in the background
+# Start all fetches in the background and store their PIDs
 for pokemon in "${POKEMONS[@]}"; do
     fetch_pokemon "$pokemon" &
+    PIDS+=($!)
 done
 
-# Show background jobs using the `jobs` command
+# List background jobs
 echo "Running background jobs:"
 jobs
 
-# Wait for all background processes to finish
-wait
+# Optional: Kill a process (example only)
+# Uncomment to actually terminate one for demo purposes
+# echo "Killing one process: ${PIDS[0]}"
+# kill "${PIDS[0]}"
+
+# Wait for all processes to complete
+for pid in "${PIDS[@]}"; do
+    wait "$pid"
+done
 
 echo "✅ All Pokémon data fetches completed."
