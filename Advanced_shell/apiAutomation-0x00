@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Define API URL
+URL="https://pokeapi.co/api/v2/pokemon/pikachu"
+
+# Make the API request and save the output
+curl -s -f "$URL" -o data.json
+
+# Check exit status of curl
+if [ $? -ne 0 ]; then
+  echo "[$(date)] Failed to fetch data from $URL" >> errors.txt
+else
+  echo "Data saved to data.json successfully."
+fi
